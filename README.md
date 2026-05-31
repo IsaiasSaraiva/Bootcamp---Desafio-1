@@ -3,6 +3,12 @@
 
 ## Como rodar como desenvolvimento
 
+Clone este repositório com o comando :
+
+```bash
+https://github.com/IsaiasSaraiva/Bootcamp---Desafio-1.git
+```
+Após clinar siga as intruções abaixo
 ```bash
 python3 -m venv venv
 source venv/bin/activate
@@ -14,11 +20,12 @@ python app.py
 
 ## Como rodar via docker
 
+Clone este repositório com o comando :
 
 ```bash
-git clone
+https://github.com/IsaiasSaraiva/Bootcamp---Desafio-1.git
 ```
-após clonar para máquina local descompate a pasta e execute os comandos via docker 
+após clonar para máquina local descompacte a pasta e execute os comandos via docker 
 
 ```bash
 docker compose up -d
