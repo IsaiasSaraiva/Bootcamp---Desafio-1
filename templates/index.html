@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RESIDÊNCIA IA · Desafio 1 - Contador de Parafusos</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0a0f1c; 
+      --panel: #121a30; 
+      --panel2: #1a2440; 
+      --line: #2c3a66;
+      --ink: #eaf0ff; 
+      --muted: #8b93c4;
+      
+      /* Cores do Tema */
+      --cyan: #29d3ff; 
+      --blue: #5b6dff; 
+      --purple: #c728f0; 
+      --magenta: #fa31fb;
+      --accent: #c728f0; 
+      --ok: #36d399; 
+      --bad: #ff5d7a;
+      
+      /* Gradiente Principal */
+      --grad: linear-gradient(90deg, #29d3ff 0%, #5b6dff 35%, #c728f0 70%, #fa31fb 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0; 
+      padding: 0 16px 60px;
+      background: radial-gradient(110% 70% at 50% -10%, #1a2348 0%, var(--bg) 55%), var(--bg);
+      color: var(--ink); 
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      min-height: 100vh; 
+    }
+
+    .wrap {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    /* 
+       Estilo do Cabeçalho 
+    */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 22px 0 16px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 26px;
+      position: relative;
+    }
+
+    .topbar::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: var(--grad);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand img {
+      height: 54px;
+      display: block;
+      filter: drop-shadow(0 0 14px #5b6dff44);
+    }
+
+    .brand .titles h1 {
+      font-family: "Saira Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 30px;
+      letter-spacing: .04em;
+      margin: 0;
+      line-height: .9;
+      text-transform: uppercase;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .brand .titles .sub {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-top: 5px;
+    }
+
+    .tag {
+      font-family: "Saira Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: #0a0f1c;
+      background: var(--grad);
+      padding: 5px 12px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border-radius: 4px;
+    }
+
+    /* 
+       3. Estrutura de Grids e cards
+    */
+    .grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 22px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .card-spaced {
+      margin-top: 22px;
+    }
+
+    .card h2 {
+      font-family: "Saira Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card h2.flex-header {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .card h2::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      background: var(--grad);
+      display: inline-block;
+      border-radius: 2px;
+    }
+
+    /* 
+       Estilo dos formulários
+    */
+    label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 14px 0 6px;
+    }
+
+    input[type=file], 
+    input[type=number] {
+      width: 100%;
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 11px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    input[type=file]::file-selector-button {
+      background: var(--line);
+      color: var(--ink);
+      border: 0;
+      padding: 7px 12px;
+      border-radius: 5px;
+      margin-right: 10px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    button.run {
+      width: 100%;
+      margin-top: 18px;
+      background: var(--grad);
+      color: #0a0f1c;
+      border: 0;
+      font-family: "Saira Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 13px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button.run:hover {
+      filter: brightness(1.1);
+    }
+
+    /* 
+       Estilo dos componentes de leitura e inferências
+    */
+    .readout {
+      text-align: center;
+      padding: 8px 0 4px;
+    }
+
+    .readout .num {
+      font-family: "Saira Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 96px;
+      line-height: .85;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .readout .lab {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .imgbox {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .imgbox img {
+      width: 100%;
+      display: block;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 50px 10px;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* Painel de Chips Rápidos */
+    .perf {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .chip .v {
+      font-family: "Saira Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--cyan);
+    }
+
+    .chip .k {
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Métricas Acumuladas */
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .metric {
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .metric .v {
+      font-family: "Saira Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 34px;
+      line-height: 1;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .metric .k {
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .metric .d {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Tabelas de Histórico */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 12px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    /* Botões de Controle */
+    .btnrow {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 11px;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      text-decoration: none;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn.csv {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .btn.csv:hover {
+      background: #29d3ff18;
+    }
+
+    .btn.reset:hover {
+      border-color: var(--bad);
+      color: var(--bad);
+    }
+
+    /* Status Variados & Feedbacks */
+    .ok { color: var(--ok) !important; } 
+    .bad { color: var(--bad) !important; }
+
+    .note {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 14px;
+      border-left: 2px solid var(--purple);
+      padding-left: 12px;
+    }
+
+    .err {
+      color: var(--bad);
+      text-align: center;
+      padding: 30px;
+      font-size: 13px;
+    }
+
+    /* 
+       Regras de responsividades
+    */
+    @media (max-width: 820px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .metrics {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      {% if logo %}<img src="{{ url_for('assets', fname=logo) }}" alt="Residência IA">{% endif %}
+      <div class="titles">
+        <h1>Desafio 1: Contador de Parafusos</h1>
+        <div class="sub"> Segmentação via FastSAM</div>
+      </div>
+    </div>
+    <div class="tag">Desafio 1</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Entrada de Dados</h2>
+      <form action="/predict" method="post" enctype="multipart/form-data">
+        <label>Insira a imagem de parafusos</label>
+        <input type="file" name="imagem" accept="image/*" required>
+        <label>Valor real de parafusos na Imagem?</label>
+        <input type="number" name="truth" min="0" placeholder="ex.: 8">
+        <div class="hint">Informe a contagem verdadeira para o sistema calcular o erro desta imagem e acumular as métricas ao lado.</div>
+        <button class="run" type="submit">Contar parafusos</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Inferência</h2>
+      {% if result and result.error %}
+        <div class="err">{{ result.error }}</div>
+      {% elif result %}
+        <div class="readout">
+          <div class="num">{{ result.pred }}</div>
+          <div class="lab">parafusos detectados</div>
+        </div>
+        {% if result.truth is not none %}
+          <div class="perf">
+            <div class="chip"><div class="v">{{ result.truth }}</div><div class="k">real</div></div>
+            <div class="chip"><div class="v {{ 'ok' if result.abs_err==0 else 'bad' }}">{{ result.abs_err }}</div><div class="k">erro abs.</div></div>
+            <div class="chip"><div class="v {{ 'ok' if result.exact else 'bad' }}">{{ 'OK' if result.exact else result.bias[:5]|upper }}</div><div class="k">{{ 'acerto' if result.exact else result.bias }}</div></div>
+          </div>
+        {% endif %}
+        <div class="perf">
+          <div class="chip"><div class="v">{{ result.ms }}<span style="font-size:11px"> ms</span></div><div class="k">latência</div></div>
+          <div class="chip"><div class="v" style="font-size:16px">{{ result.res }}</div><div class="k">resolução</div></div>
+          <div class="chip"><div class="v" style="font-size:16px">{{ perf.engine }}</div><div class="k">motor</div></div>
+        </div>
+        <div class="imgbox"><img src="{{ result.image_uri }}" alt="resultado anotado"></div>
+      {% else %}
+        <div class="empty">Nenhuma imagem processada ainda.<br>Envie uma imagem ao lado para ver a contagem e a detecção anotada.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card card-spaced">
+    <h2 class="flex-header">
+      <span>Métricas de Desempenho</span>
+      <span class="btnrow">
+        <a class="btn csv" href="/exportar_csv">Exportar CSV</a>
+        {% if (agg.n and agg.n>0) or (perf.n and perf.n>0) %}
+        <form action="/reset" method="post" style="margin:0"><button class="btn reset" type="submit">Zerar</button></form>
+        {% endif %}
+      </span>
+    </h2>
+    {% if not agg.n or agg.n==0 %}
+      <div class="empty">Sem avaliações ainda. Informe a "contagem real" ao enviar uma imagem para medir MAE, RMSE e acurácia. (O CSV pode ser exportado a qualquer momento.)</div>
+    {% else %}
+      <div class="metrics">
+        <div class="metric"><div class="v">{{ agg.mae }}</div><div class="k">MAE</div><div class="d">erro médio absoluto</div></div>
+        <div class="metric"><div class="v">{{ agg.rmse }}</div><div class="k">RMSE</div><div class="d">penaliza erros grandes</div></div>
+        <div class="metric"><div class="v">{{ agg.exact_acc }}%</div><div class="k">Acurácia exata</div><div class="d">{{ agg.exact }}/{{ agg.n }} imagens</div></div>
+        <div class="metric"><div class="v">{{ agg.over }}/{{ agg.under }}</div><div class="k">Super/Sub</div><div class="d">viés de contagem</div></div>
+      </div>
+      <table>
+        <tr><th>#</th><th>Previsto</th><th>Real</th><th>Erro</th><th>Status</th></tr>
+        {% for h in history %}
+        <tr>
+          <td>{{ history|length - loop.index0 }}</td>
+          <td>{{ h.pred }}</td>
+          <td>{{ h.truth if h.truth is not none else '—' }}</td>
+          <td>{{ h.err if h.err is not none else '—' }}</td>
+          <td>
+            {% if h.err is none %}<span style="color:var(--muted)">sem gabarito</span>
+            {% elif h.err==0 %}<span class="ok">exato</span>
+            {% elif h.err>0 %}<span class="bad">+{{ h.err }} (super)</span>
+            {% else %}<span class="bad">{{ h.err }} (sub)</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+  {% if perf.n and perf.n>0 %}
+  <div class="card card-spaced">
+    <h2>Desempenho operacional</h2>
+    <div class="metrics">
+      <div class="metric"><div class="v">{{ perf.avg_ms }}<span style="font-size:14px"> ms</span></div><div class="k">Latência média</div><div class="d">mín {{ perf.min_ms }} / máx {{ perf.max_ms }}</div></div>
+      <div class="metric"><div class="v">{{ perf.fps }}</div><div class="k">Throughput</div><div class="d">imagens / segundo</div></div>
+      <div class="metric"><div class="v">{{ perf.model_mb if perf.model_mb else '—' }}<span style="font-size:14px"> MB</span></div><div class="k">Tamanho do modelo</div><div class="d">{{ perf.engine }}</div></div>
+      <div class="metric"><div class="v">{{ perf.n }}</div><div class="k">Inferências</div><div class="d">nesta sessão</div></div>
+    </div>
+    <div class="note">Métricas operacionais são medidas no hardware onde o app roda — em CPU será mais lento que em GPU. Latência e tamanho do modelo atendem ao critério de baixo recurso.</div>
+    <div class="note" style="border-color:var(--muted)">Métricas de <b>detecção</b> (Precisão, Recall, F1, mAP@0.5) exigem <b>caixas de referência</b> por imagem, não apenas a contagem — por isso são calculadas em avaliação <b>offline</b>, não nesta tela.</div>
+  </div>
+  {% endif %}
+</div>
+</body>
+</html>

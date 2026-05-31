@@ -1,0 +1,11 @@
+services:
+  picking:
+    build: .
+    image: picking-fastsam
+    container_name: picking-fastsam
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    volumes:
+      # permite trocar a logo sem rebuildar a imagem
+      - ./Assets:/app/Assets:ro

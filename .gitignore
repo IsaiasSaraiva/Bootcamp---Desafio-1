@@ -1,0 +1,27 @@
+# Ambiente virtual
+venv/
+.venv/
+env/
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Pesos de modelo (baixados automaticamente na 1ª execução)
+*.pt
+FastSAM-s.pt
+
+# Saídas geradas
+dataset/
+recortes/
+fundos/
+*.log
+
+# Config do Ultralytics
+.ultralytics/
+
+# IDE / sistema operacional
+.vscode/
+.idea/
+.DS_Store
